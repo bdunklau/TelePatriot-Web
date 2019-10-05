@@ -8,6 +8,23 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <app-root></app-root>
+<div id="remote-media"></div>
+<div id="controls">
+  <div id="preview">
+    <p class="instructions">Hello Beautiful</p>
+    <div id="local-media"></div>
+    <button id="button-preview">Preview My Camera</button>
+  </div>
+  <div id="room-controls">
+    <p class="instructions">Room Name:</p>
+    <input id="room-name" type="text" placeholder="Enter a room name" />
+    <button id="button-join">Join Room</button>
+    <button id="button-leave">Leave Room</button>
+  </div>
+  <div id="log"></div>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="src/index.js"></script>
 </body>
 </html>
