@@ -1,13 +1,24 @@
 {
   "name": "tele-patriot-web",
   "version": "0.0.0",
+  "description": "TelePatriot for the web, firebase-enabled",
+  "main": "index.js",
+  "comments": "a lot of this came from ~/video-quickstart-js/package.json",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "build": "npm-run-all build:*",
+    "clean": "npm-run-all clean:*",
+    "build:quickstart": "browserify src/support/index.js > src/index.js",
+    "start": "npm run build && node server",
+    "ng_orig": "ng",
+    "start_orig": "ng serve",
+    "build_orig": "ng build",
+    "test_orig": "ng test",
+    "lint_orig": "ng lint",
+    "e2e_orig": "ng e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bdunklau/TelePatriot-Web.git"
   },
   "private": true,
   "dependencies": {
@@ -21,7 +32,13 @@
     "@angular/router": "~8.2.8",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
-    "zone.js": "~0.9.1"
+    "zone.js": "~0.9.1",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.2",
+    "prismjs": "^1.6.0",
+    "stackblur-canvas": "^1.4.0",
+    "twilio": "^3.19.1",
+    "twilio-video": "^2.0.0-beta9"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.6",
@@ -42,6 +59,10 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
-    "typescript": "~3.5.3"
+    "typescript": "~3.5.3",
+    "browserify": "^14.3.0",
+    "copyfiles": "^1.2.0",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1"
   }
 }
