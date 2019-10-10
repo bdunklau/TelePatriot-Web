@@ -32,7 +32,7 @@ export class VideoChatService {
     private roomBroadcast = new ReplaySubject<boolean>();
 
     constructor(private readonly http: HttpClient,
-                private db: AngularFireDatabase,) {
+                private db: AngularFireDatabase,) {  // AngularFireDatabase:  https://github.com/angular/angularfire2/blob/master/src/database/database.ts
         this.$roomsUpdated = this.roomBroadcast.asObservable();
     }
 
@@ -52,12 +52,17 @@ export class VideoChatService {
     }
 
     // returns the sms_phone number under the video_node_key, used for validating the /video/invitation url
-    async getSmsPhone(video_node_key: string) {
-        // var ref = this.db.object('video/list/'+video_node_key).valueChanges().pipe(take(1))
-        // ref.subscribe(data  => {
-        //     console.log(video_node_key+':  data = ', data);
-        // });
-        return await this.db.object('video/list/'+video_node_key)
+    async getSmsPhone(video_node_key: string): Promise<string> {
+        /**
+        this.db.object(path) returns AngularFireObject
+        AngularFireObject:   https://github.com/angular/angularfire2/blob/master/src/database/interfaces.ts
+        **/
+
+        let dataSnapshot = await this.db.object('video/list/'+video_node_key).query.ref.once('value')
+        if(!dataSnapshot.val()) {
+          return null;
+        }
+        return dataSnapshot.val().sms_phone;
     }
 
     async joinOrCreateRoom(name: string, tracks: LocalTrack[]) {

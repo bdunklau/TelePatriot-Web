@@ -15,27 +15,25 @@ export class VideoNodeGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Promise<boolean> {
 
-      if(!next.params.video_node_key || !next.params.sms_phone) {
+
+      // rule:  the sms_phone must be under the video_node_key
+      // We're checking to make sure no one is hacking the url
+
+
+      let expectedMobile = next.params.sms_phone;
+      if(!next.params.video_node_key || !expectedMobile) {
           this.router.navigate(['/notfound']);
           return false;
       }
 
-      var expectedPhone = this.videoChatService.getSmsPhone(next.params.video_node_key);
-      console.log('expectedPhone = ', expectedPhone);
-
-      // if(next.params.sms_phone !== videoChatService.getSmsPhone(next.params.video_node_key)) {
-      //     this.router.navigate(['/notfound']);
-      //     return false;
-      // }
+      let actualMobile = await this.videoChatService.getSmsPhone(next.params.video_node_key);
+      console.log('sms_phone = ',actualMobile );
 
 
-
-      // rule:  the sms_phone must be under the video_node_key
-      // We're checking to make sure no one is hacking the url
-      // if(actualPhone !== expectedPhone) {
-      //     this.router.navigate(['/notfound']);
-      //     return false;
-      //   }
+      if(!actualMobile || actualMobile+"" !== expectedMobile) {
+          this.router.navigate(['/notfound']);
+          return false;
+      }
 
       return true;
   }
