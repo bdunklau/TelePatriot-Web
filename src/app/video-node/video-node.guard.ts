@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { VideoChatService } from '../video-chat/video-chat.service';
+// import { VideoChatService } from '../video-chat/video-chat.service';
+import { VideoNodeService } from '../video-node/video-node.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VideoNodeGuard implements CanActivate {
 
-  constructor(private videoChatService: VideoChatService,
+  constructor(//private videoChatService: VideoChatService,
+              private videoNodeService: VideoNodeService,
               private router: Router,) {}
 
   async canActivate(
@@ -26,7 +28,9 @@ export class VideoNodeGuard implements CanActivate {
           return false;
       }
 
-      let actualMobile = await this.videoChatService.getSmsPhone(next.params.video_node_key);
+      // let actualMobile = await this.videoChatService.getSmsPhone(next.params.video_node_key);
+      let videoNode = await this.videoNodeService.getVideoNode(next.params.video_node_key);
+      let actualMobile = videoNode.val.sms_phone;
       console.log('sms_phone = ',actualMobile );
 
 
@@ -34,6 +38,14 @@ export class VideoNodeGuard implements CanActivate {
           this.router.navigate(['/notfound']);
           return false;
       }
+
+
+      // This is how we pass data from the guard to the resolver so we don't have to resolve
+      // thing twice.  NOTE: next.data is immutable BUT we CAN create a new next.data
+      // using the spread operator to keep the previously resolved data
+      next.data = {...next.data, /*guarded data*/videoNode: videoNode};
+
+      // now go look at video-node.resolver.ts
 
       return true;
   }
