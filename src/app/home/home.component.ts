@@ -5,6 +5,9 @@ import { CameraComponent } from '../camera/camera.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { ParticipantsComponent } from '../participants/participants.component';
 import { VideoChatService } from '../video-chat/video-chat.service';
+import { VideoEvent } from '../video-event/video-event.model';
+import { ActivatedRoute } from '@angular/router';
+import { /*Subject, Observable,*/ Subscription } from 'rxjs';
 
 // FIXME what do we do about this ASP stuff?
 // import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
@@ -24,13 +27,32 @@ export class HomeComponent implements OnInit {
     @ViewChild('participants', {static: true}) participants: ParticipantsComponent;
 
     activeRoom: Room;
+    private routeSubscription: Subscription;
 
-    // private notificationHub: HubConnection;
 
     constructor(
-        private readonly videoChatService: VideoChatService) { }
+        private readonly videoChatService: VideoChatService,
+        private route: ActivatedRoute,) { }
 
     async ngOnInit() {
+        // how do we get the path parameters?
+
+        this.routeSubscription = this.route.data.subscribe(routeData => {
+            // see video-node.resolver.ts and video-invitation.resolver.ts
+            let videoNode = routeData['videoNode'];
+            let videoInvitation = routeData['videoInvitation'];
+            console.log('HomeComponent: videoNode = ', videoNode);
+            console.log('HomeComponent: videoInvitation = ', videoInvitation);
+
+            // Accept the VideoInvitation
+            this.videoChatService.acceptInvitation(videoInvitation);
+
+            // Is this where we construct the "connect request" video event ?
+            this.videoChatService.connectRequest(videoNode);
+        })
+
+
+
         // const builder =
         //     new HubConnectionBuilder()
         //         .configureLogging(LogLevel.Information)
@@ -69,25 +91,27 @@ export class HomeComponent implements OnInit {
         this.participants.clear();
     }
 
-    async onRoomChanged(roomName: string) {
-        if (roomName) {
-            if (this.activeRoom) {
-                this.activeRoom.disconnect();
-            }
 
-            this.camera.finalizePreview();
-            const tracks = await this.settings.showPreviewCamera();
-
-            this.activeRoom =
-                await this.videoChatService
-                          .joinOrCreateRoom(roomName, tracks);
-
-            this.participants.initialize(this.activeRoom.participants);
-            this.registerRoomEvents();
-
-            // this.notificationHub.send('RoomsUpdated', true); // LOOK
-        }
-    }
+// maybe...
+    // async onRoomChanged(roomName: string) {
+    //     if (roomName) {
+    //         if (this.activeRoom) {
+    //             this.activeRoom.disconnect();
+    //         }
+    //
+    //         this.camera.finalizePreview();
+    //         const tracks = await this.settings.showPreviewCamera();
+    //
+    //         this.activeRoom =
+    //             await this.videoChatService
+    //                       .joinOrCreateRoom(roomName, tracks);
+    //
+    //         this.participants.initialize(this.activeRoom.participants);
+    //         this.registerRoomEvents();
+    //
+    //         // this.notificationHub.send('RoomsUpdated', true); // LOOK
+    //     }
+    // }
 
     onParticipantsChanged(_: boolean) {
         this.videoChatService.nudge();
