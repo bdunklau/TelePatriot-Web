@@ -12,7 +12,7 @@ import { VideoNode } from '../video-node/video-node.model';
 import { VideoEvent } from '../video-event/video-event.model';
 import { VideoInvitation } from '../video-invitation/video-invitation.model';
 import * as _ from 'lodash';
-
+import * as moment from 'moment';
 
 interface AuthToken {
     token: string;
@@ -44,12 +44,18 @@ export class VideoChatService {
         // video/list/[video_node_key]/video_participants/[guest uid]/[key] = [value]
         // and also
         // video/list/[video_node_key]/room_id = [room_id]
+        const now = moment();
+        const start_date = now.format('ddd MMM D, h:mm:ss a Z Y');
+        const start_date_ms = now.valueOf();
         var nodes = {}
         let video_node_key = videoInvitation.val.video_node_key;
         let guest_id = videoInvitation.val.guest_id;
-        _.each(Object.keys(videoInvitation.val), key => {
-            nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/'+key] = videoInvitation.val[key];
-        })
+        nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/name'] = videoInvitation.val.guest_name;
+        nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/present'] = true
+        nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/start_date'] = start_date; // 'ddd MMM D, h:mm:ss a Z Y'   Sat Oct 12, 12:26:34 PM CDT 2019
+        nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/start_date_ms'] = start_date_ms;
+        // nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/twilio_token'] = twilio_token; // HOW IS THIS SET?
+        nodes['video/list/'+video_node_key+'/video_participants/'+guest_id+'/uid'] = guest_id;
         nodes['video/list/'+video_node_key+'/room_id'] = videoInvitation.val.room_id
         console.log('updating these nodes = ', nodes);
         this.db.object('/').update(nodes);
@@ -61,15 +67,6 @@ export class VideoChatService {
         console.log('ve = ', ve);
         console.log('ve.toObj() = ', ve.toObj());
         this.db.list("video/video_events").push(ve.toObj());
-
-      // let ve = VideoEvent(uid: TPUser.sharedInstance.getUid(),
-                            // name: TPUser.sharedInstance.getName(),
-                            // video_node_key: vn.getKey(),
-                            // room_id: room_id,
-                            // request_type: request_type,
-                            // RoomSid: vn.room_sid,
-                            // MediaUri: vn.composition_MediaUri) /*keeps the server from trying to create a room that already exists - prevents js exception   see switchboard.js:connect() */
-      //   ve.save()
     }
 
 
@@ -84,11 +81,11 @@ export class VideoChatService {
     // }
 
 
-    getAllRooms() {
-        return this.http
-                   .get<Rooms>('api/video/rooms')
-                   .toPromise();
-    }
+    // getAllRooms() {
+    //     return this.http
+    //                .get<Rooms>('api/video/rooms')
+    //                .toPromise();
+    // }
 
     // returns the sms_phone number under the video_node_key, used for validating the /video/invitation url
     async getSmsPhone(video_node_key: string): Promise<string> {
@@ -105,29 +102,31 @@ export class VideoChatService {
     }
 
 
-// maybe
-    // async joinOrCreateRoom(name: string, tracks: LocalTrack[]) {
-    //     let room: Room = null;
-    //     try {
-    //         const token = await this.getAuthToken();
-    //         room =
-    //             await connect(
-    //                 token, {
-    //                     name,
-    //                     tracks,
-    //                     dominantSpeaker: true
-    //                 } as ConnectOptions);
-    //     } catch (error) {
-    //         console.error(`Unable to connect to Room: ${error.message}`);
-    //     } finally {
-    //         if (room) {
-    //             this.roomBroadcast.next(true);
-    //         }
-    //     }
-    //
-    //     return room;
-    // }
+    // called by   HomeComponent.onRoomChanged()
+    async joinOrCreateRoom(name: string, tracks: LocalTrack[], auth_token: string) {
+        let room: Room = null;
+        try {
+            const token = auth_token; //await this.getAuthToken();
+            room =
+                await connect(
+                    token, {
+                        name,
+                        tracks,
+                        dominantSpeaker: true
+                    } as ConnectOptions);
+        } catch (error) {
+            console.error(`Unable to connect to Room: ${error.message}`);
+        } finally {
+            if (room) {
+                this.roomBroadcast.next(true);
+            }
+        }
 
+        return room;
+    }
+
+
+// not sure what this is for - but you can search for usages
     nudge() {
         this.roomBroadcast.next(true);
     }

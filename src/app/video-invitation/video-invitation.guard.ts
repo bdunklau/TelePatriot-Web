@@ -17,18 +17,16 @@ export class VideoInvitationGuard implements CanActivate {
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Promise<boolean> {
 
-
-        let videoInvitation = await this.videoInvitationService.getVideoInvitation(next.params.sms_phone);
-
-
-        // This is how we pass data from the guard to the resolver so we don't have to resolve
-        // thing twice.  NOTE: next.data is immutable BUT we CAN create a new next.data
-        // using the spread operator to keep the previously resolved data
+        let vi = await this.videoInvitationService.getVideoInvitation(next.params.sms_phone)
+        let vi3 = await vi[0].payload.ref.once('value');
+        console.log('canActivate: vi3.val() = ', vi3.val());
+        let videoInvitation = new VideoInvitation(vi3.val());
         next.data = {...next.data, /*guarded data*/videoInvitation: videoInvitation};
 
-        // now go look at video-invitation.resolver.ts
+        // why are we using a guard if we always return true
 
         return true;
+
     }
 
 }

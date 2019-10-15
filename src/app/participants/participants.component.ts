@@ -24,7 +24,7 @@ import {
 export class ParticipantsComponent {
     // https://stackoverflow.com/a/56752507
     // query results available in ngOnInit
-    @ViewChild('list', {static: true}) listRef: ElementRef;
+    @ViewChild('list', {static: false}) listRef: ElementRef;
     @Output('participantsChanged') participantsChanged = new EventEmitter<boolean>();
     @Output('leaveRoom') leaveRoom = new EventEmitter<boolean>();
     @Input('activeRoomName') activeRoomName: string;

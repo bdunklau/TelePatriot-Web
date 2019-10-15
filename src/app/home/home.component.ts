@@ -1,13 +1,16 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
 import { RoomsComponent } from '../rooms/rooms.component';
 import { CameraComponent } from '../camera/camera.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { ParticipantsComponent } from '../participants/participants.component';
 import { VideoChatService } from '../video-chat/video-chat.service';
+import { VideoNodeService } from '../video-node/video-node.service';
 import { VideoEvent } from '../video-event/video-event.model';
 import { ActivatedRoute } from '@angular/router';
 import { /*Subject, Observable,*/ Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 // FIXME what do we do about this ASP stuff?
 // import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
@@ -21,35 +24,48 @@ export class HomeComponent implements OnInit {
 
     // https://stackoverflow.com/a/56752507
     // query results available in ngOnInit
-    @ViewChild('rooms', {static: true}) rooms: RoomsComponent;
-    @ViewChild('camera', {static: true}) camera: CameraComponent;
-    @ViewChild('settings', {static: true}) settings: SettingsComponent;
-    @ViewChild('participants', {static: true}) participants: ParticipantsComponent;
+    @ViewChild('rooms', {static: false}) rooms: RoomsComponent;
+    @ViewChild('camera', {static: false}) camera: CameraComponent;
+    @ViewChild('settings', {static: false}) settings: SettingsComponent;
+    @ViewChild('participants', {static: false}) participants: ParticipantsComponent;
 
     activeRoom: Room;
     private routeSubscription: Subscription;
+    private videoNodeSubscription: Subscription;
 
 
     constructor(
         private readonly videoChatService: VideoChatService,
+        private readonly videoNodeService: VideoNodeService,
         private route: ActivatedRoute,) { }
 
     async ngOnInit() {
-        // how do we get the path parameters?
 
-        this.routeSubscription = this.route.data.subscribe(routeData => {
-            // see video-node.resolver.ts and video-invitation.resolver.ts
-            let videoNode = routeData['videoNode'];
-            let videoInvitation = routeData['videoInvitation'];
-            console.log('HomeComponent: videoNode = ', videoNode);
-            console.log('HomeComponent: videoInvitation = ', videoInvitation);
+        console.log('this.route.data has toPromise()??  ', this.route.data);
+        let obj = await this.route.data.pipe(take(1)).toPromise();
+        const vi = obj.videoInvitation;
+        const vn = obj.videoNode
+        console.log('vi = ', vi);
+        console.log('vn = ', vn);
 
-            // Accept the VideoInvitation
-            this.videoChatService.acceptInvitation(videoInvitation);
+        this.videoChatService.acceptInvitation(vi);
+        this.videoChatService.connectRequest(vn);
 
-            // Is this where we construct the "connect request" video event ?
-            this.videoChatService.connectRequest(videoNode);
-        })
+
+
+
+
+        // const token = vn.video_participants[vi.guest_id].twilio_token;
+        //
+        // // connect right off the bat - because that's why you're here
+        // this.connect(vn.room_id, token);
+
+        this.videoNodeSubscription = this.videoNodeService.watchVideoNode(vn.val.video_node_key).subscribe(vnode => {
+            console.log('vnode = ', vnode);
+            const participants = vnode['video_participants'];
+            this.connect(vnode['room_id'], participants[vi.val.guest_id].twilio_token);
+        });
+
 
 
 
@@ -74,11 +90,59 @@ export class HomeComponent implements OnInit {
         // })
     }
 
+    ngOnDestroy() {
+        if(this.routeSubscription) this.routeSubscription.unsubscribe();
+        if(this.videoNodeSubscription) this.videoNodeSubscription.unsubscribe();
+        this.disconnect(true);
+    }
+
+    // figureOutConnectivity(vnode: VideoNode, guest_id: string) {
+    //
+    //     var doIHaveToken = false;
+    //     const me = vnode.val.video_participants[guest_id];
+    //     var iAmParticipant = me != null;
+    //     if(iAmParticipant) {
+    //         if (currentVideoNode.room_id.startsWith("record"))
+    //             doIHaveToken = me.twilio_token_record != null;
+    //         else
+    //             doIHaveToken = me.twilio_token != null;
+    //     }
+    //
+    //     // Are we connected?
+    //     // const connected = room && (room.getState() == RoomState.CONNECTED || room.getState() == RoomState.CONNECTING);
+    //
+    //     const iAmAbleToConect = doIHaveToken;
+    //     const doINeedToConnect = !connected && shouldBeConnected;
+    //
+    //     const iAmAboutToConnect = iAmAbleToConect && doINeedToConnect;
+    //     const iAmAboutToDisconnect = doINeedToDisconnect;
+    //     const iAmAboutToSwitchRooms = iAmAbleToConect && doINeedToSwitchRooms;
+    //
+    //     if(iAmAboutToConnect) {
+    //         console.log("connecting...");
+    //         doConnect();
+    //     }
+    //     else if(iAmAboutToDisconnect) {
+    //         console.log("disconnecting...");
+    //         doDisconnect();
+    //     }
+    //     else if(iAmAboutToSwitchRooms) {
+    //         console.log("disconnecting...");
+    //         doDisconnect();
+    //         console.log("connecting...");
+    //         doConnect();
+    //     }
+    // }
+
     async onSettingsChanged(deviceInfo: MediaDeviceInfo) {
         await this.camera.initializePreview(deviceInfo);
     }
 
     async onLeaveRoom(_: boolean) {
+        this.disconnect(true);
+    }
+
+    async disconnect(b: boolean) {
         if (this.activeRoom) {
             this.activeRoom.disconnect();
             this.activeRoom = null;
@@ -92,31 +156,37 @@ export class HomeComponent implements OnInit {
     }
 
 
-// maybe...
-    // async onRoomChanged(roomName: string) {
-    //     if (roomName) {
-    //         if (this.activeRoom) {
-    //             this.activeRoom.disconnect();
-    //         }
-    //
-    //         this.camera.finalizePreview();
-    //         const tracks = await this.settings.showPreviewCamera();
-    //
-    //         this.activeRoom =
-    //             await this.videoChatService
-    //                       .joinOrCreateRoom(roomName, tracks);
-    //
-    //         this.participants.initialize(this.activeRoom.participants);
-    //         this.registerRoomEvents();
-    //
-    //         // this.notificationHub.send('RoomsUpdated', true); // LOOK
-    //     }
-    // }
+    // called by  RoomsComponent.roomChanged
+    async onRoomChanged(roomName: string) {
+        this.connect(roomName, "twilio token not available here - woops");
+    }
 
-    onParticipantsChanged(_: boolean) {
+    async connect(roomName: string, auth_token: string) {
+        if (roomName) {
+            if (this.activeRoom) {
+                this.activeRoom.disconnect();
+            }
+
+            this.camera.finalizePreview();
+            const tracks = await this.settings.showPreviewCamera();
+
+            this.activeRoom =
+                await this.videoChatService
+                          .joinOrCreateRoom(roomName, tracks, auth_token);
+
+            this.participants.initialize(this.activeRoom.participants);
+            this.registerRoomEvents();
+
+            // this.notificationHub.send('RoomsUpdated', true); // LOOK
+        }
+    }
+
+
+    onParticipantsChanged(b: boolean) {
         this.videoChatService.nudge();
     }
 
+    // called by   onRoomChanged()
     private registerRoomEvents() {
         this.activeRoom
             .on('disconnected',

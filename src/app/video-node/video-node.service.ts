@@ -22,4 +22,8 @@ export class VideoNodeService {
     console.log('vn.val.video_node_key = ', vn.val.video_node_key);
     return vn;
   }
+
+  watchVideoNode(video_node_key: string) {
+    return this.db.object('video/list/'+video_node_key).valueChanges();
+  }
 }
