@@ -158,10 +158,10 @@ export class HomeComponent implements OnInit {
 
     // called by  RoomsComponent.roomChanged
     async onRoomChanged(roomName: string) {
-        this.connect(roomName, "twilio token not available here - woops");
+        this.doConnect(roomName, "twilio token not available here - woops");
     }
 
-    async connect(roomName: string, auth_token: string) {
+    async doConnect(roomName: string, auth_token: string) {
         if (roomName) {
             if (this.activeRoom) {
                 this.activeRoom.disconnect();
