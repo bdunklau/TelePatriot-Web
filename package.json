@@ -35,6 +35,8 @@
     "express": "^4.15.2",
     "firebase": "^7.1.0",
     "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
     "prismjs": "^1.6.0",
     "rxjs": "^6.4.0",
     "rxjs-compat": "^6.5.3",

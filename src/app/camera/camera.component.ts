@@ -10,7 +10,7 @@ export class CameraComponent implements AfterViewInit {
 
     // https://stackoverflow.com/a/56752507
     // query results available in ngOnInit
-    @ViewChild('preview', {static: true}) previewElement: ElementRef;
+    @ViewChild('preview', {static: false}) previewElement: ElementRef;
 
     get tracks(): LocalTrack[] {
         return this.localTracks;

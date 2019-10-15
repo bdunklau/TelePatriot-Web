@@ -51,6 +51,6 @@ export class RoomsComponent implements OnInit, OnDestroy {
     }
 
     async updateRooms() {
-        this.rooms = (await this.videoChatService.getAllRooms()) as NamedRoom[];
+        // this.rooms = (await this.videoChatService.getAllRooms()) as NamedRoom[];
     }
 }

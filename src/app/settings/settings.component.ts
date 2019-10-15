@@ -35,8 +35,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     // https://stackoverflow.com/a/56752507
     // query results available in ngOnInit
-    @ViewChild('camera', {static: true}) camera: CameraComponent;
-    @ViewChild('videoSelect', {static: true}) video: DeviceSelectComponent;
+    @ViewChild('camera', {static: false}) camera: CameraComponent;
+    @ViewChild('videoSelect', {static: false}) video: DeviceSelectComponent;
 
     @Input('isPreviewing') isPreviewing: boolean;
     @Output() settingsChanged = new EventEmitter<MediaDeviceInfo>();
@@ -51,6 +51,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
                 .pipe(debounceTime(350))
                 .subscribe(async deviceListPromise => {
                     this.devices = await deviceListPromise;
+                    // based on console output, these are local devices.  Not sure if also remote devices 
+                    console.log('settings:  this.devices = ', this.devices);
                     this.handleDeviceAvailabilityChanges();
                 });
     }

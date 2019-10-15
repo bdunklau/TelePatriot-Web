@@ -9,18 +9,19 @@
     <div class="row">
       <div class="col-sm-12"> <!-- remote camera - lower left -->
 
-            <app-participants #participants
-                             (leaveRoom)="onLeaveRoom($event)"
-                             (participantsChanged)="onParticipantsChanged($event)"
-                             [style.display]="!!activeRoom ? 'block' : 'none'"
-                             [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-participants>
+            <app-rooms #rooms (roomChanged)="onRoomChanged($event)"
+                       [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
+
       </div>
     </div>
   </div>
 
   <div class="col-sm-8"> <!-- verbiage - right side -->
-            <app-rooms #rooms (roomChanged)="onRoomChanged($event)"
-                       [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
+              <app-participants #participants
+                               (leaveRoom)="onLeaveRoom($event)"
+                               (participantsChanged)="onParticipantsChanged($event)"
+                               [style.display]="!!activeRoom ? 'block' : 'none'"
+                               [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-participants>
 
             <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>
   </div>
