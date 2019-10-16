@@ -6,6 +6,7 @@ import { SettingsComponent } from '../settings/settings.component';
 import { ParticipantsComponent } from '../participants/participants.component';
 import { VideoChatService } from '../video-chat/video-chat.service';
 import { VideoNodeService } from '../video-node/video-node.service';
+import { VideoNode } from '../video-node/video-node.model';
 import { VideoEvent } from '../video-event/video-event.model';
 import { ActivatedRoute } from '@angular/router';
 import { /*Subject, Observable,*/ Subscription } from 'rxjs';
@@ -32,7 +33,7 @@ export class HomeComponent implements OnInit {
     activeRoom: Room;
     private routeSubscription: Subscription;
     private videoNodeSubscription: Subscription;
-
+    private currentRoomId: string;
 
     constructor(
         private readonly videoChatService: VideoChatService,
@@ -60,10 +61,69 @@ export class HomeComponent implements OnInit {
         // // connect right off the bat - because that's why you're here
         // this.connect(vn.room_id, token);
 
-        this.videoNodeSubscription = this.videoNodeService.watchVideoNode(vn.val.video_node_key).subscribe(vnode => {
+        this.videoNodeSubscription = this.videoNodeService.watchVideoNode(vn.val.video_node_key).subscribe(res => {
+            const vnode = new VideoNode(res);
             console.log('vnode = ', vnode);
-            const participants = vnode['video_participants'];
-            this.connect(vnode['room_id'], participants[vi.val.guest_id].twilio_token);
+
+            console.log("vi[\'guest_id\'] = ", vi.val['guest_id']);
+
+            var doIHaveToken = false;
+            // Should we be connected?
+            const me = vnode.getParticipant(vi.val['guest_id']);
+            console.log("me = ", me);
+            const iAmParticipant = me != null;
+            var token;
+            if(iAmParticipant) {
+                if (vnode.val['room_id'] !=null && vnode.val['room_id'].startsWith("record"))
+                    token = me.val['twilio_token_record']
+                else
+                    token = me.val['twilio_token']
+
+                doIHaveToken = token != null;
+            }
+            console.log("token = ", token);
+
+            const connected = this.activeRoom != null && (this.activeRoom.state == "connected" || this.activeRoom.state == "reconnecting" || this.activeRoom.state == "reconnected");
+            const shouldBeConnected = me != null && me.isConnected();
+            const iAmAbleToConect = doIHaveToken;
+            const doINeedToConnect = !connected && shouldBeConnected;
+            const iAmAboutToConnect = iAmAbleToConect && doINeedToConnect;
+
+            const shouldBeDisconnected = !shouldBeConnected;
+            const doINeedToDisconnect = connected && shouldBeDisconnected;
+            const iAmAboutToDisconnect = doINeedToDisconnect;
+
+            const connectedToTheWrongRoom = connected && vnode.val['room_id'] != this.currentRoomId;
+            const doINeedToSwitchRooms = shouldBeConnected && connectedToTheWrongRoom;
+            const iAmAboutToSwitchRooms = iAmAbleToConect && doINeedToSwitchRooms;
+
+            if(iAmAboutToConnect) {
+                console.log("connecting...");
+                this.doConnect(vnode.val['room_id'], token);
+                this.currentRoomId = vnode.val['room_id'];
+            }
+            else if(iAmAboutToDisconnect) {
+                console.log("disconnecting...");
+                this.doDisconnect(vnode.val['room_id']);
+                this.currentRoomId = vnode.val['room_id'];
+            }
+            else if(iAmAboutToSwitchRooms) {
+                console.log("disconnecting...");
+                this.doDisconnect(vnode.val['room_id']);
+                console.log("connecting...");
+                this.doConnect(vnode.val['room_id'], token);
+                this.currentRoomId = vnode.val['room_id'];
+            }
+            else {
+                console.log("not connecting - because iAmAboutToConnect = ", iAmAboutToConnect);
+                console.log('iAmAbleToConect && doINeedToConnect = ', iAmAbleToConect, ' && ', doINeedToConnect, ' = ', (iAmAbleToConect && doINeedToConnect));
+                console.log('doINeedToConnect = !connected && shouldBeConnected = ', (!connected), ' && ', shouldBeConnected, ' = ', doINeedToConnect);
+                console.log('iAmAbleToConect = doIHaveToken = ', doIHaveToken);
+                console.log('shouldBeConnected = me != null && me.isConnected() = ', (me!=null), ' && ', me.isConnected(), ' = ', shouldBeConnected);
+                console.log('connected = this.activeRoom... && this.activeRoom.state...');
+                console.log('this.activeRoom = ', this.activeRoom);
+                if(this.activeRoom != null) console.log('this.activeRoom.state = ', this.activeRoom.state);
+            }
         });
 
 
@@ -81,19 +141,12 @@ export class HomeComponent implements OnInit {
         //     }
         // });
         // await this.notificationHub.start();
-
-
-        // this.routeSubscription = this.route.data.subscribe(routeData => {
-        //     let video_node_key = routeData['video_node_key'];
-        //     let sms_phone = routeData['sms_phone'];
-        //     // first, validate that the phone matches the video_node_key
-        // })
     }
 
     ngOnDestroy() {
         if(this.routeSubscription) this.routeSubscription.unsubscribe();
         if(this.videoNodeSubscription) this.videoNodeSubscription.unsubscribe();
-        this.disconnect(true);
+        this.doDisconnect(true);
     }
 
     // figureOutConnectivity(vnode: VideoNode, guest_id: string) {
@@ -139,10 +192,10 @@ export class HomeComponent implements OnInit {
     }
 
     async onLeaveRoom(_: boolean) {
-        this.disconnect(true);
+        this.doDisconnect(true);
     }
 
-    async disconnect(b: boolean) {
+    async doDisconnect(b: boolean) {
         if (this.activeRoom) {
             this.activeRoom.disconnect();
             this.activeRoom = null;
@@ -157,9 +210,9 @@ export class HomeComponent implements OnInit {
 
 
     // called by  RoomsComponent.roomChanged
-    async onRoomChanged(roomName: string) {
-        this.doConnect(roomName, "twilio token not available here - woops");
-    }
+    // async onRoomChanged(roomName: string) {
+    //     this.doConnect(roomName, "twilio token not available here - woops");
+    // }
 
     async doConnect(roomName: string, auth_token: string) {
         if (roomName) {
@@ -174,6 +227,7 @@ export class HomeComponent implements OnInit {
                 await this.videoChatService
                           .joinOrCreateRoom(roomName, tracks, auth_token);
 
+            console.log('this.activeRoom.participants = ', this.activeRoom.participants)
             this.participants.initialize(this.activeRoom.participants);
             this.registerRoomEvents();
 

@@ -1,4 +1,4 @@
-
+import { VideoParticipant } from '../video-participant/video-participant.model';
 
 // Generate model classes with ng cli like this:
 // ng generate class video-event/video-event --type=model
@@ -88,6 +88,20 @@ export class VideoNode {
       // if (val.youtube_video_description) youtube_video_description = val.youtube_video_description;
       // if (val.youtube_video_description_unevaluated) youtube_video_description_unevaluated = val.youtube_video_description_unevaluated;
 
+  }
+
+  getParticipant(uid: string):VideoParticipant {
+      if(this.val['video_participants'] == null) {
+          console.log('getParticipant('+uid+'):  this.val[\'video_participants\'] == null')
+          return null;
+      }
+      const vp = this.val['video_participants'][uid];
+      console.log('getParticipant('+uid+'):  this.val[\'video_participants\'] = ', this.val['video_participants']);
+      if(vp == null) {
+          console.log('getParticipant('+uid+'):  this.val[\'video_participants\'][uid] == null')
+          return null;
+      }
+      return new VideoParticipant(vp);
   }
 
   // // TODO:
