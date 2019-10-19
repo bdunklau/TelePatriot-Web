@@ -25,6 +25,9 @@ export class ParticipantsComponent {
     // https://stackoverflow.com/a/56752507
     // query results available in ngOnInit
     @ViewChild('list', {static: false}) listRef: ElementRef;
+    // this says "list" but we're going to refactor so it only supports one remote participant
+
+
     @Output('participantsChanged') participantsChanged = new EventEmitter<boolean>();
     @Output('leaveRoom') leaveRoom = new EventEmitter<boolean>();
     @Input('activeRoomName') activeRoomName: string;
@@ -40,7 +43,10 @@ export class ParticipantsComponent {
     private participants: Map<Participant.SID, RemoteParticipant>;
     private dominantSpeaker: RemoteParticipant;
 
+
+    // Renderer2:   https://ngrefs.com/latest/core/renderer2
     constructor(private readonly renderer: Renderer2) { }
+
 
     clear() {
         if (this.participants) {
@@ -98,10 +104,14 @@ export class ParticipantsComponent {
 
     private attachRemoteTrack(track: RemoteTrack) {
         if (this.isAttachable(track)) {
+            // this method called twice for a participant
+            // the first time, element is an <audio> element, type unknown
+            // the second time, element is a <video> element, type unknown
             const element = track.attach();
+            console.log('element is a -> ', element);
             this.renderer.data.id = track.sid;
-            this.renderer.setStyle(element, 'width', '95%');
-            this.renderer.setStyle(element, 'margin-left', '2.5%');
+            this.renderer.setStyle(element, 'width', '100%');
+            this.renderer.setStyle(element, 'margin-left', '0%');
             this.renderer.appendChild(this.listRef.nativeElement, element);
             this.participantsChanged.emit(true);
         }

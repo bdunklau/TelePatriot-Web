@@ -1,5 +1,19 @@
 
+.h100 {
+  height: 100vh;
+}
 
+.h50 {
+  height: 50vh;
+}
+
+.w35 {
+  width: 35vw;
+}
+
+.w65 {
+  width: 65vw;
+}
 
 div#controls div#preview div#local-media video {
   max-width: 100%;

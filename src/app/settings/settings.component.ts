@@ -51,7 +51,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
                 .pipe(debounceTime(350))
                 .subscribe(async deviceListPromise => {
                     this.devices = await deviceListPromise;
-                    // based on console output, these are local devices.  Not sure if also remote devices 
+                    // this.devices = [InputDeviceInfo]
+                    // just one element array on the MacBook
                     console.log('settings:  this.devices = ', this.devices);
                     this.handleDeviceAvailabilityChanges();
                 });
@@ -73,6 +74,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
     async showPreviewCamera() {
         this.isPreviewing = true;
+
+        //   = DeviceSelectComponent   with  .localDevices = [InputDeviceInfo]
+        console.log('this.video = ', this.video);
+        console.log('this.videoDeviceId = ', this.videoDeviceId);
 
         if (this.videoDeviceId !== this.video.selectedId) {
             this.videoDeviceId = this.video.selectedId;

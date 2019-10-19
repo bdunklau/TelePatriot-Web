@@ -1,0 +1,41 @@
+
+<div class="row">
+  <div class="col-sm-4">
+    <div class="row">
+      <div class="col-sm-12"> <!-- local camera - upper left -->
+
+            <app-camera #camera [style.display]="!!activeRoom ? 'none' : 'block'"></app-camera>
+
+            <app-camera #camera></app-camera>
+            
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12"> <!-- remote camera - lower left -->
+
+            <!-- should be only 1, but can support multiple participants -->
+            participants begin
+            <app-participants #participants
+                            (leaveRoom)="onLeaveRoom($event)"
+                            (participantsChanged)="onParticipantsChanged($event)"
+                            [style.display]="!!activeRoom ? 'block' : 'block'"
+                            [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-participants>
+                            participants end
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-sm-8"> <!-- verbiage - right side -->
+
+        <P>app-settings<br/>
+          <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>
+        </P>
+
+        <P>app-rooms<br/>
+            <app-rooms #rooms (roomChanged)="onRoomChanged($event)"
+                   [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
+        </P>
+
+  </div>
+</div>

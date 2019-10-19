@@ -17,6 +17,9 @@ import { environment } from '../environments/environment';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { LocalParticipantComponent } from './local-participant/local-participant.component';
+import { RemoteParticipantComponent } from './remote-participant/remote-participant.component';
+import { VideoChatComponent } from './video-chat/video-chat.component';
 
 
 @NgModule({
@@ -29,7 +32,10 @@ import { NotFoundComponent } from './not-found/not-found.component';
     RoomsComponent,
     SettingsComponent,
     DeviceSelectComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    LocalParticipantComponent,
+    RemoteParticipantComponent,
+    VideoChatComponent,
   ],
   imports: [
     BrowserModule,

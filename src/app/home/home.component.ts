@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Room, LocalTrack, LocalVideoTrack, LocalAudioTrack, RemoteParticipant } from 'twilio-video';
 import { RoomsComponent } from '../rooms/rooms.component';
 import { CameraComponent } from '../camera/camera.component';
@@ -13,9 +13,6 @@ import { /*Subject, Observable,*/ Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import * as _ from 'lodash';
 
-// FIXME what do we do about this ASP stuff?
-// import { HubConnection, HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
-
 @Component({
     selector: 'app-home',
     styleUrls: ['./home.component.css'],
@@ -26,7 +23,10 @@ export class HomeComponent implements OnInit {
     // https://stackoverflow.com/a/56752507
     // query results available in ngOnInit
     @ViewChild('rooms', {static: false}) rooms: RoomsComponent;
+
+    // notice #camera in home.component.html
     @ViewChild('camera', {static: false}) camera: CameraComponent;
+
     @ViewChild('settings', {static: false}) settings: SettingsComponent;
     @ViewChild('participants', {static: false}) participants: ParticipantsComponent;
 
@@ -143,10 +143,12 @@ export class HomeComponent implements OnInit {
         // await this.notificationHub.start();
     }
 
-    ngOnDestroy() {
+    @HostListener('window:beforeunload')
+    async ngOnDestroy() {
+        this.doDisconnect(true);
         if(this.routeSubscription) this.routeSubscription.unsubscribe();
         if(this.videoNodeSubscription) this.videoNodeSubscription.unsubscribe();
-        this.doDisconnect(true);
+        console.log('doDisconnect()');
     }
 
     // figureOutConnectivity(vnode: VideoNode, guest_id: string) {
@@ -188,7 +190,7 @@ export class HomeComponent implements OnInit {
     // }
 
     async onSettingsChanged(deviceInfo: MediaDeviceInfo) {
-        await this.camera.initializePreview(deviceInfo);
+        // await this.camera.initializePreview(deviceInfo);
     }
 
     async onLeaveRoom(_: boolean) {
@@ -201,9 +203,9 @@ export class HomeComponent implements OnInit {
             this.activeRoom = null;
         }
 
-        this.camera.finalizePreview();
+        // this.camera.finalizePreview();
         const videoDevice = this.settings.hidePreviewCamera();
-        this.camera.initializePreview(videoDevice);
+        // this.camera.initializePreview(videoDevice);
 
         this.participants.clear();
     }
@@ -220,7 +222,7 @@ export class HomeComponent implements OnInit {
                 this.activeRoom.disconnect();
             }
 
-            this.camera.finalizePreview();
+            // this.camera.finalizePreview();
             const tracks = await this.settings.showPreviewCamera();
 
             this.activeRoom =
