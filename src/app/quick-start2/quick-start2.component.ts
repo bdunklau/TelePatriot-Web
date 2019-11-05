@@ -118,7 +118,9 @@ export class QuickStart2Component implements OnInit {
                 await connect(
                     token, {
                         logLevel: 'debug',
-                        roomValue,
+                        name: roomValue,
+                        preferredAudioCodecs: ['isac'],
+                        preferredVideoCodecs: ['H264']
                         //tracks,
                         // dominantSpeaker: true,
                         // automaticSubscription: true
