@@ -5,6 +5,7 @@ import { ActivatedRoute/*, Router*/ } from '@angular/router';
 import { /*Subject, Observable,*/ Subscription } from 'rxjs';
 import * as moment from 'moment';
 import { LogService } from '../log/log.service';
+import * as huh from "webrtc-adapter";
 
 // should go in a service
 import { connect,
