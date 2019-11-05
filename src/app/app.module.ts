@@ -20,6 +20,10 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { LocalParticipantComponent } from './local-participant/local-participant.component';
 import { RemoteParticipantComponent } from './remote-participant/remote-participant.component';
 import { VideoChatComponent } from './video-chat/video-chat.component';
+import { MissionAccomplishedComponent } from './mission-accomplished/mission-accomplished.component';
+import { QuickStartComponent } from './quick-start/quick-start.component';
+import { LogComponent } from './log/log.component';
+import { QuickStart2Component } from './quick-start2/quick-start2.component';
 
 
 @NgModule({
@@ -36,6 +40,10 @@ import { VideoChatComponent } from './video-chat/video-chat.component';
     LocalParticipantComponent,
     RemoteParticipantComponent,
     VideoChatComponent,
+    MissionAccomplishedComponent,
+    QuickStartComponent,
+    LogComponent,
+    QuickStart2Component,
   ],
   imports: [
     BrowserModule,

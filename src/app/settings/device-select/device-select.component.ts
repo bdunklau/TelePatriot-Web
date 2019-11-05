@@ -31,9 +31,11 @@ export class DeviceSelectComponent {
 
     constructor() {
         this.id = `device-select-${IdGenerator.getNext()}`;
+        console.log('DeviceSelectComponent: this.id = ', this.id);
     }
 
     onSettingsChanged(deviceId: string) {
+        console.log('DeviceSelectComponent: onSettingsChanged(): deviceId = ',deviceId);
         this.setAndEmitSelections(this.selectedId = deviceId);
     }
 

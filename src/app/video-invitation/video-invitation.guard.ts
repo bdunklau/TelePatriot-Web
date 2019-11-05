@@ -18,6 +18,20 @@ export class VideoInvitationGuard implements CanActivate {
         state: RouterStateSnapshot): Promise<boolean> {
 
         let vi = await this.videoInvitationService.getVideoInvitation(next.params.sms_phone)
+
+        if(!vi || !vi[0]) {
+            console.log("next.data.videoNode = ", next.data.videoNode)
+
+            var missionAccomplished = next.data.videoNode.val['email_to_participant_send_date'] != null
+            if(missionAccomplished) {
+                this.router.navigate(['/mission-accomplished', next.params['video_node_key'], next.params['sms_phone'] ]);
+                return;
+            }
+
+            return false;
+        }
+
+
         let vi3 = await vi[0].payload.ref.once('value');
         console.log('canActivate: vi3.val() = ', vi3.val());
         let videoInvitation = new VideoInvitation(vi3.val());

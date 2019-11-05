@@ -1,47 +1,199 @@
 
-<!-- <div class="container-fluid"> -->
-<table style="width:100%;height:100%">
-  <tr style="width:100%;height:100%">
-    <td style="width:35%">
-      <table style="width:100%;height:100%">
-        <tr style="width:100%;height:50%">
-          <td style="width:100%;height:100%">
-                        <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>
-          </td>
-        </tr>
-        <tr style="width:100%;height:50%">
-          <td style="width:100%;height:100%">
-                      <!-- should be only 1, but can support multiple participants -->
-                      <!-- participants begin -->
-                      <app-participants #participants
-                                      (leaveRoom)="onLeaveRoom($event)"
-                                      (participantsChanged)="onParticipantsChanged($event)"
-                                      [style.display]="!!activeRoom ? 'block' : 'block'"
-                                      [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-participants>
-                                      <!-- participants end -->
-
-
-                      <!-- html of rooms component is suppressed - not needed -->
-                      <app-rooms #rooms (roomChanged)="onRoomChanged($event)"
-                             [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
-          </td>
-        </tr>
-      </table>
-    </td>
-    <td style="width:65%" valign="top">
+<div class="container-fluid">
+  <div class="row">
+    <!-- only two main columns -->
+    <div class="col">
       <div class="row">
-        <div class="col"><b>Description</b></div>
-      </div>
-      <div class="row">
+        <!-- local participant -->
         <div class="col">
-          <!-- needs to come from the database -->
-            This is a video petition.  In a video petition, the one person must mention the legislator
-            by name and must mention the legislator's position on COS
+<div>local-media</div>
+                <div id="local-media"></div>
+<div>local-media</div>
+<br/>
+<div>app-camera</div>
+                <app-camera #camera [style.display]="!!activeRoom ? 'none' : 'block'"></app-camera>
+<div>app-camera</div>
+<br/>
+<div>app-settings</div>
+                <!--
+                    app-settings has an app-camera
+                    app-camera has 2 child video tags ! -->
+                <app-settings #settings (settingsChanged)="onSettingsChanged($event)"></app-settings>
+<div>app-settings</div>
         </div>
+        <!-- local participant -->
+
       </div>
 
-    </td>
-  </tr>
-</table>
 
-<!-- </div> -->
+      <div class="row">
+
+        <!-- remote participant -->
+        <div class="col">
+
+                <div>remote-media</div>
+                <div id="remote-media"></div>
+                <div>remote-media</div>
+
+
+                <!-- should be only 1, but can support multiple participants -->
+                <!-- participants begin -->
+                <app-participants #participants
+                                (leaveRoom)="onLeaveRoom($event)"
+                                (participantsChanged)="onParticipantsChanged($event)"
+                                [style.display]="!!activeRoom ? 'block' : 'block'"
+                                [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-participants>
+                                <!-- participants end -->
+
+
+                <!-- html of rooms component is suppressed - not needed -->
+                <!-- <app-rooms #rooms (roomChanged)="onRoomChanged($event)"
+                       [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms> -->
+
+                <app-rooms #rooms
+                      [activeRoomName]="!!activeRoom ? activeRoom.name : null"></app-rooms>
+        </div>
+        <!-- remote participant -->
+
+      </div>
+    </div>
+
+    <!-- the 2nd main column where all the verbiage is -->
+    <div class="col" style="overflow:scroll; height:100vh;">
+
+          <input id="room-name" type="text" value="-Ls9al1BYJr4IVBuytD0" placeholder="Enter a room name" />
+          <button id="button-join">Join Room</button>
+          <button id="button-leave">Leave Room</button>
+          <br/><input id="authtoken" type="text" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzcyMjE1NDAyNDMyZDVjNWI1ZDBmZWNjNjNhOGM3NDM3LTE1NzI0NTg0NjEiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJmZmYgZ2dnIiwidmlkZW8iOnsicm9vbSI6Ii1MczlhbDFCWUpyNElWQnV5dEQwIn19LCJpYXQiOjE1NzI0NTg0NjEsImV4cCI6MTU3MjQ2MjA2MSwiaXNzIjoiU0s3MjIxNTQwMjQzMmQ1YzViNWQwZmVjYzYzYThjNzQzNyIsInN1YiI6IkFDY2U3ZTVlNWNiZjMwOWFjNGViODFiNjU3OTc5M2ExYjEifQ.shJhp-4b3JHpohRgBYsj7GM7zTufD_l_idVMcv1X6LU" placeholder="Enter token" />
+          <br/><button id="button-deviceinfo">Device Info</button>
+          <br/><button id="button-initializePreview">initializePreview</button>
+          <br/><button id="button-finalizePreview">finalizePreview</button>
+
+          <div style="border: 1px solid black; margin-top:10px">
+              <b>settings</b>
+              <div *ngFor="let item of settings | keyvalue">
+                  {{item.key}} = {{item.value}}
+              </div>
+          </div>
+
+
+          <div style="border: 1px solid black; margin-top:10px">
+              <b>Camera</b>
+              <div *ngFor="let item of camera | keyvalue">
+                  {{item.key}} = {{item.value}}
+              </div>
+              <br/>home.deviceInfo = <span *ngIf="!!deviceInfo">{{deviceInfo}}</span>
+              <br/>camera.deviceInfo = <span *ngIf="camera && camera.deviceInfo">{{camera.deviceInfo}}</span>
+              <br/>camera.videoTrack = <span *ngIf="camera && camera.videoTrack">{{camera.videoTrack}}</span>
+          </div>
+
+
+          <div style="border: 1px solid black; margin-top:10px">
+              <b>camera.localTracks</b>
+              <span *ngIf="camera && camera.localTracks">
+                  <div *ngFor="let tr of camera.localTracks">
+                    {{tr}}
+                  </div>
+              </span>
+          </div>
+
+
+          <div style="border: 1px solid black; margin-top:10px">
+              <b>activeRoom</b>
+              <br/>activeRoom = {{activeRoom}}
+              <br/>activeRoom.state = <span *ngIf="activeRoom && activeRoom.state"><span [style.background]="activeRoom.state==='connected' ? 'green' : 'red'">{{activeRoom.state}}</span></span>
+              <br/>activeRoom.localParticipant = <span *ngIf="activeRoom">{{activeRoom.localParticipant}}</span>
+          </div>
+
+
+          <div style="border: 1px solid black; margin-top:10px">
+              <b>activeRoom.participants</b>
+              <br/>activeRoom.participants = <span *ngIf="activeRoom && activeRoom.participants">{{activeRoom.participants}}
+                  <br/>activeRoom.participants.size = {{activeRoom.participants.size}}
+                  <br/>
+                  <span *ngFor="let part of activeRoom.participants | keyvalue">
+                    <br/>{{part.key}} = {{part.value}}
+                    <span *ngFor="let item of part.value | keyvalue">
+                      <br/>{{item.key}} = {{item.value}}
+                      <span *ngIf="item.key==='tracks'">
+                          <div *ngFor="let track of item.value | keyvalue">
+                              <div *ngFor="let xxx of track | keyvalue">
+                              {{xxx.key}} = {{xxx.value}}
+                              </div>
+                          </div>
+                      </span>
+                    </span>
+                  </span>
+              </span>
+              <br/><span *ngIf="!!activeRoom && !!activeRoom.participants && !!!activeRoom.participants.videoTracks">videoTracks...
+                  <span *ngFor="let part of activeRoom.participants.videoTracks | keyvalue">
+                      <br/>{{part.key}} = {{part.value}}
+                  </span>
+              </span>
+          </div>
+
+
+          <div style="border: 1px solid black; margin-top:10px">
+              <b>ERROR</b>
+              <br/>{{error}}
+          </div>
+
+
+
+          <br/>
+          <app-log></app-log>
+          <br/>
+
+      <span *ngIf="!!vnode">
+          <div class="row"><div class="col"><b>{{descriptionLabel}}</b></div></div>
+          <div class="row"><div class="col">{{vnode.val['video_mission_description']}}</div></div>
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{legislatorLabel}}</b></div></div>
+          <div class="row">
+            <div class="col">
+              {{vnode.val['legislator_first_name']}} {{vnode.val['legislator_last_name']}} {{state}} {{chamber}} {{vnode.val['legislator_district']}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              FB: <a href="{{fbLink}}" target="fb">{{fbHandle}}</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              TW: <a href="{{twLink}}" target="tw">{{twHandle}}</a>
+            </div>
+          </div>
+
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{videoTitleHeader}}</b></div></div>
+          <div class="row"><div class="col">{{vnode.val['video_title']}}</div></div>
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{youtubeVideoDescriptionHeader}}</b></div></div>
+          <div class="row"><div class="col">{{vnode.val['youtube_video_description']}}</div></div>
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{what_do_you_want_to_do_with_your_video}}</b></div></div>
+          <div class="row">
+            <div class="col">{{email_to_legislator_label}}</div>
+            <div class="col">{{vnode.val['email_to_legislator']}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col">{{post_to_facebook_label}}</div>
+            <div class="col">{{vnode.val['post_to_facebook']}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col">{{post_to_twitter_label}}</div>
+            <div class="col">{{vnode.val['post_to_twitter']}}</div>
+          </div>
+
+          <!-- <div class="row"><div class="col">{{video_status}}</div></div> -->
+      </span>
+
+
+    </div>
+    <!-- the 2nd main column where all the verbiage is -->
+
+  </div>
+</div>

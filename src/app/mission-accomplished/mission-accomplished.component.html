@@ -1,0 +1,19 @@
+<h3>Mission Accomplished</h3>
+
+<div class="row" style="margin-bottom:25px"><div class="col"><b>Date:</b> {{vnode.val['publishing_stopped']}}</div></div>
+
+<div class="row"><div class="col">Here's what you did...</div></div>
+<div class="row" style="margin-bottom: 50px;">
+    <div class="col">You created this video
+      <br/><b>Title:</b> {{vnode.val['video_title']}}
+      <br/><b>YouTube Video Description:</b>
+      <br/><div [innerHTML]=youtube_video_description></div>
+    </div>
+</div>
+
+<div class="row" style="margin-bottom:25px" *ngFor="let post of posts">
+    <div class="col">
+      <b>{{post.you_posted}}</b>
+      <br/><a href="{{post.link}}" target="post">{{post.link}}</a>
+    </div>
+</div>

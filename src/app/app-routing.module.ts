@@ -7,11 +7,22 @@ import { VideoNodeGuard } from './video-node/video-node.guard';
 import { VideoNodeResolver } from './video-node/video-node.resolver';
 import { VideoInvitationResolver } from './video-invitation/video-invitation.resolver';
 import { VideoInvitationGuard } from './video-invitation/video-invitation.guard';
+import { MissionAccomplishedComponent } from './mission-accomplished/mission-accomplished.component';
+import { QuickStartComponent } from './quick-start/quick-start.component';
+import { QuickStart2Component } from './quick-start2/quick-start2.component';
+import { LogComponent } from './log/log.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
+  { path: 'log', component: LogComponent },
+  { path: 'mission-accomplished/:video_node_key/:sms_phone', component: MissionAccomplishedComponent,
+        canActivate: [VideoNodeGuard],
+        resolve: {videoNode: VideoNodeResolver}  },
+
   { path: 'notfound', component: NotFoundComponent },
+  { path: 'quick-start/:name/:token', component: QuickStartComponent },
+  { path: 'quick-start2/:name', component: QuickStart2Component },
   { path: 'video/invitation/:video_node_key/:sms_phone',
         component: HomeComponent,
         canActivate: [VideoNodeGuard, VideoInvitationGuard],
