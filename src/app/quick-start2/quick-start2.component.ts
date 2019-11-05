@@ -113,6 +113,7 @@ export class QuickStart2Component implements OnInit {
         // let tracks = createLocalTracks({ audio: true, video: true });
         let room: Room = null;
         let roomValue = this.roomValue;
+        let tracks = this.localTracks;
         try {
             const token = this.tokenValue;
             room =
@@ -121,8 +122,8 @@ export class QuickStart2Component implements OnInit {
                         logLevel: 'debug',
                         name: roomValue,
                         preferredAudioCodecs: ['isac'],
-                        preferredVideoCodecs: ['H264']
-                        //tracks,
+                        preferredVideoCodecs: ['H264'],
+                        tracks: tracks,
                         // dominantSpeaker: true,
                         // automaticSubscription: true
                     } as ConnectOptions);
@@ -173,6 +174,7 @@ export class QuickStart2Component implements OnInit {
 
 
     private detachLocalTrack(track: LocalTrack) {
+        this.d('detachLocalTrack: see this on iphones prematurely?')
         if (this.isDetachable(track)) {
             track.detach().forEach(el => el.remove());
         }
