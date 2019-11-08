@@ -18,7 +18,7 @@ export class VideoInvitationResolver implements Resolve<VideoInvitation> {
 
       return route.data.videoInvitation;
 
-      // now go look at home.component.ts
+      // now go look at home.component.ts and video-invitation.component.ts
     }
 
 }

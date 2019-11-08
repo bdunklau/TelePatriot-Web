@@ -1,37 +1,84 @@
 
-  <!-- ******************************************************** -->
-  <!-- iPhone users have to be on Safari, not any other browser -->
-  <!-- ******************************************************** -->
+<div class="container-fluid">
   <div class="row">
-    <div class="col-sm-4">
+    <!-- only two main columns -->
+    <div class="col-4">
       <div class="row">
+
+        <!-- local participant -->
         <div class="col">
-                <div id="controls">
-                  <div id="preview">
-                    <div id="local-media"></div>
-                  </div>
-                </div>
+            <div id="preview" #preview style="width:30vw;">
+                <div *ngIf="isInitializing">Loading preview... Please wait.</div>
+            </div>
         </div>
+        <!-- local participant -->
+
       </div>
+
+
       <div class="row">
+        <!-- remote participant -->
         <div class="col">
-          <!-- remote camera -->
-          <div id="remote-media"></div>
+            <div #list></div>
         </div>
+        <!-- remote participant -->
+
       </div>
     </div>
-    <div class="col-sm-8">
-      <!-- THIS IS WHERE ALL THE VERBIAGE GOES -->
-      <button id="button-preview">Preview My Camera</button>
+
+    <!-- the 2nd main column where all the verbiage is -->
+    <div class="col-7" style="overflow:scroll; height:100vh">
+
+      <span *ngIf="!!vnode">
+          <div class="row"><div class="col"><b>{{descriptionLabel}}</b></div></div>
+          <div class="row"><div class="col">{{vnode.val['video_mission_description']}}</div></div>
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{legislatorLabel}}</b></div></div>
+          <div class="row">
+            <div class="col">
+              {{vnode.val['legislator_first_name']}} {{vnode.val['legislator_last_name']}} {{state}} {{chamber}} {{vnode.val['legislator_district']}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              FB: <a href="{{fbLink}}" target="fb">{{fbHandle}}</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              TW: <a href="{{twLink}}" target="tw">{{twHandle}}</a>
+            </div>
+          </div>
 
 
-      <div id="room-controls">
-        <p class="instructions">Room Name:</p>
-        <input id="room-name" type="text" placeholder="Enter a room name" />
-        <button id="button-join">Join Room</button>
-        <button id="button-leave">Leave Room</button>
-      </div>
-      <div id="log"></div>
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{videoTitleHeader}}</b></div></div>
+          <div class="row"><div class="col">{{vnode.val['video_title']}}</div></div>
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{youtubeVideoDescriptionHeader}}</b></div></div>
+          <div class="row"><div class="col">{{vnode.val['youtube_video_description']}}</div></div>
+
+          <div class="row" style="margin-top:20px;"><div class="col"><b>{{what_do_you_want_to_do_with_your_video}}</b></div></div>
+          <div class="row">
+            <div class="col">{{email_to_legislator_label}}</div>
+            <div class="col">{{vnode.val['email_to_legislator']}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col">{{post_to_facebook_label}}</div>
+            <div class="col">{{vnode.val['post_to_facebook']}}</div>
+          </div>
+
+          <div class="row">
+            <div class="col">{{post_to_twitter_label}}</div>
+            <div class="col">{{vnode.val['post_to_twitter']}}</div>
+          </div>
+
+          <!-- <div class="row"><div class="col">{{video_status}}</div></div> -->
+      </span>
+
 
     </div>
+    <!-- the 2nd main column where all the verbiage is -->
+
   </div>
+</div>

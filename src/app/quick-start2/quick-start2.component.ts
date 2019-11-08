@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
 // import { VideoChatService } from '../video-chat/video-chat.service';
 import { VideoTokenService } from '../video-token/video-token.service';
 import { ActivatedRoute/*, Router*/ } from '@angular/router';
@@ -28,7 +28,7 @@ import { connect,
   templateUrl: './quick-start2.component.html',
   styleUrls: ['./quick-start2.component.css']
 })
-export class QuickStart2Component implements OnInit {
+export class QuickStart2Component implements OnInit, OnDestroy {
 
     name: string;
     tokenDate: number;
@@ -70,6 +70,10 @@ export class QuickStart2Component implements OnInit {
                 this.tokenDate = res[0].payload.val()['date_ms'];
             }
         });
+    }
+
+    async ngOnDestroy() {
+        if(this.vtSub) this.vtSub.unsubscribe();
     }
 
     async ngAfterViewInit() {
@@ -114,6 +118,7 @@ export class QuickStart2Component implements OnInit {
         let room: Room = null;
         let roomValue = this.roomValue;
         let tracks = this.localTracks;
+        this.d('doConnect(): this.localTracks = '+this.localTracks);
         try {
             const token = this.tokenValue;
             room =
@@ -127,18 +132,31 @@ export class QuickStart2Component implements OnInit {
                         // dominantSpeaker: true,
                         // automaticSubscription: true
                     } as ConnectOptions);
+            this.d(`OK: =======================================================`);
+            this.d(`OK: roomName = ${roomValue}`);
+            this.d(`OK: token = ${this.tokenValue}`);
+            this.d(`OK: this.activeRoom = ${this.activeRoom}`);
+            this.d('returning room = '+room+' for room name='+roomValue);
+            this.activeRoom = room;
+
+            this.initialize(this.activeRoom.participants);
+            this.registerRoomEvents();
+
         } catch (error) {
+            this.d(`ERROR: ======================================================`);
             this.d(`ERROR: Unable to connect to Room: ${error.message}`);
+            this.d(`ERROR: roomName = ${roomValue}`);
+            this.d(`ERROR: token = ${this.tokenValue}`);
+            if(this.activeRoom) {
+                this.d(`ERROR: this.activeRoom.participants = ${this.activeRoom.participants}`);
+                this.d(`ERROR: this.activeRoom.localParticipant = ${this.activeRoom.localParticipant}`);
+            }
         } finally {
             // if (room) {
             //     this.roomBroadcast.next(true);
             // }
         }
-        this.d('returning room = '+room+' for room name='+this.roomValue);
-        this.activeRoom = room;
 
-        this.initialize(this.activeRoom.participants);
-        this.registerRoomEvents();
     }
 
     private registerRoomEvents() {
@@ -261,6 +279,7 @@ export class QuickStart2Component implements OnInit {
         if(this.activeRoom) {
             this.activeRoom.disconnect();
             this.d("disconnected from activeRoom="+this.activeRoom);
+            this.initializeDevice();
         }
     }
 
@@ -319,7 +338,8 @@ export class QuickStart2Component implements OnInit {
 
 
     d(msg:string) {
-        this.log.d('QuickStart2Component: name:'+this.name+' : '+msg);
+        let dt = moment().format('M/D/Y HH:mm:ss');
+        this.log.d(dt+' QS2Comp: name:'+this.name+' : '+msg);
     }
 
 }

@@ -3,6 +3,9 @@ import { CanActivate, ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTr
 import { Observable } from 'rxjs';
 import { VideoInvitation } from '../video-invitation/video-invitation.model';
 import { VideoInvitationService } from '../video-invitation/video-invitation.service';
+import { LogService } from '../log/log.service';
+import * as moment from 'moment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +14,8 @@ export class VideoInvitationGuard implements CanActivate {
 
 
     constructor(private videoInvitationService: VideoInvitationService,
-                private router: Router,) {}
+                private router: Router,
+                private log: LogService) {}
 
     async canActivate(
         next: ActivatedRouteSnapshot,
@@ -19,28 +23,36 @@ export class VideoInvitationGuard implements CanActivate {
 
         let vi = await this.videoInvitationService.getVideoInvitation(next.params.sms_phone)
 
+        /**
+        This needs to change.  From now on, the video invitation will still be present
+        So as the logic is now, the else block will get called and we end up going to
+        the video chat screen.
+
+        We probably need a MissionAccomplishedGuard
+        **/
         if(!vi || !vi[0]) {
-            console.log("next.data.videoNode = ", next.data.videoNode)
-
-            var missionAccomplished = next.data.videoNode.val['email_to_participant_send_date'] != null
-            if(missionAccomplished) {
-                this.router.navigate(['/mission-accomplished', next.params['video_node_key'], next.params['sms_phone'] ]);
-                return;
-            }
-
+            console.log("next.data.videoNode = ", next.data.videoNode);
             return false;
+        }
+        else {
+            let vi3 = await vi[0].payload.ref.once('value');
+            console.log('canActivate: vi3.val() = ', vi3.val());
+            let videoInvitation = new VideoInvitation(vi3.val());
+            next.data = {...next.data, /*guarded data*/videoInvitation: videoInvitation};
+
+            // why are we using a guard if we always return true
+
+            return true;
         }
 
 
-        let vi3 = await vi[0].payload.ref.once('value');
-        console.log('canActivate: vi3.val() = ', vi3.val());
-        let videoInvitation = new VideoInvitation(vi3.val());
-        next.data = {...next.data, /*guarded data*/videoInvitation: videoInvitation};
 
-        // why are we using a guard if we always return true
+    }
 
-        return true;
 
+    d(msg:string) {
+        let dt = moment().format('M/D/Y HH:mm:ss');
+        this.log.d(dt+' MissAccompGrd : '+msg);
     }
 
 }

@@ -21,6 +21,7 @@ export class LogService {
         e['date'] = moment().format('ddd MMM D, h:mm:ss a Z Y');
         e['date_ms'] = moment().valueOf();
         e['level'] = 'debug';
+        // e['isError'] = msg.toLowerCase().indexOf('error') != -1;
 
         this.db.list("video/log").push(e);
     }

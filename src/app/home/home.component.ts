@@ -50,7 +50,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         private log: LogService) { }
 
     async ngOnInit() {
-        // this.log.d('HomeComponent.ngOnInit()');
 
         console.log('this.route.data has toPromise()??  ', this.route.data);
         let obj = await this.route.data.pipe(take(1)).toPromise();
@@ -205,7 +204,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     @HostListener('window:beforeunload')
     async ngOnDestroy() {
         this.doDisconnect(true);
-        if(this.routeSubscription) this.routeSubscription.unsubscribe();
         if(this.videoNodeSubscription) this.videoNodeSubscription.unsubscribe();
         console.log('doDisconnect()');
     }
