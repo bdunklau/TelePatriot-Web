@@ -1,0 +1,76 @@
+<!--
+we want:
+
+field to enter CB ID
+button to add Video Creator role
+button to remove Video Creator role
+
+labels to confirm:
+
+name
+role
+ -->
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- left half of the page -->
+        <!-- contains the form, fields, buttons -->
+        <div class="col-lg-6">
+
+              <h3>Authorize Someone to Initiate Video Calls</h3>
+
+              <div style="margin-top:20px;color:#f00000;font-size:20px;font-weight:bold">
+              Do not share this page with others
+              </div>
+
+              <div style="margin-top:40px">
+              <b>Enter someone's CitizenBuilder ID</b> to authorize them to initiate video calls
+              </div>
+
+              <form (ngSubmit)="onSubmit()" #videoCreatorForm="ngForm">
+                <div class="form-group">
+                  <input type="number" class="form-control" id="cbid_field" placeholder="CitizenBuilder ID"
+                          [(ngModel)]="cbidValue" name="cbid" #cbid="ngModel" required>
+                  <div [hidden]="cbid.valid || cbid.pristine"
+                       class="alert alert-danger">
+                    CitizenBuilder ID is required
+                  </div>
+                </div>
+
+
+                <button id="authorize" type="submit" class="btn btn-success" [disabled]="!videoCreatorForm.form.valid">Authorize</button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="revoke_authority" type="button"  class="btn btn-danger" [disabled]="!videoCreatorForm.form.valid"
+                        (click)="removeVideoCreatorRole()">Revoke Authority</button>
+
+              </form>
+
+
+
+        </div>
+        <!-- left half of the page -->
+
+
+
+        <!-- right half of the page -->
+        <!-- labels that confirm what just happened -->
+        <div class="col-lg-6" *ngIf="!!user">
+            <h3 style="color:#008000"><b>Confirmed</b></h3>
+            <b>{{user.name}}</b> (CB ID: <a href="https://dashboard.conventionofstates.com/admin/people/{{user.citizen_builder_id}}"
+                                    target="cb"
+                                    title="view {{user.name}} in CitizenBuilder">{{user.citizen_builder_id}}</a>)
+            <br/>State: {{user.state_abbrev}}
+            <br/><b>Roles:</b>
+            <div *ngFor="let role of user.roles | keyvalue">
+                <span *ngIf="role.value === 'true'">
+                    {{role.key}} <span *ngIf="role.key === 'Video Creator'" style="color:#008000"><b><<< authorizes {{user.name}} to start video calls</b></span>
+                </span>
+            </div>
+        </div>
+        <!-- right half of the page -->
+
+    </div>
+
+</div>
