@@ -12,6 +12,8 @@ import { QuickStartComponent } from './quick-start/quick-start.component';
 import { QuickStart2Component } from './quick-start2/quick-start2.component';
 import { LogComponent } from './log/log.component';
 import { MissionAccomplishedGuard } from './mission-accomplished/mission-accomplished.guard';
+import { VideoCreatorsComponent } from './video-creators/video-creators.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -24,6 +26,7 @@ const routes: Routes = [
   { path: 'notfound', component: NotFoundComponent },
   { path: 'quick-start/:name/:token', component: QuickStartComponent },
   { path: 'quick-start2/:name', component: QuickStart2Component },
+  { path: 'video/creators', component: VideoCreatorsComponent },
   { path: 'video/invitation/:video_node_key/:sms_phone',
         component: VideoInvitationComponent,
         canActivate: [VideoNodeGuard, VideoInvitationGuard, MissionAccomplishedGuard],
