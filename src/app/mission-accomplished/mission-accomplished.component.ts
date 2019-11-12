@@ -114,7 +114,7 @@ export class MissionAccomplishedComponent implements OnInit {
 
             if(this.vnode.val['twitter_post_id']) {
                 var p = {you_posted: "You posted this video to Twitter",
-                          link: "https://www.twitter.com/"+this.vnode.val['twitter_post_id']};
+                          link: "https://www.twitter.com/realTelePatriot/status/"+this.vnode.val['twitter_post_id']};
                 this.posts.push(p);
             }
         });
