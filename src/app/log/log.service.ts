@@ -23,7 +23,7 @@ export class LogService {
         e['level'] = 'debug';
         // e['isError'] = msg.toLowerCase().indexOf('error') != -1;
 
-        this.db.list("video/log").push(e);
+        // this.db.list("video/log").push(e);
     }
 
     deleteLogs() {
