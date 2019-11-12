@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 })
 export class LogComponent implements OnInit {
 
-  private logs: any; //{event:string, level:string, date:string, date_ms:number}[];
+  logs: any; //{event:string, level:string, date:string, date_ms:number}[];
   private logSubscription: Subscription;
 
   constructor(private logService: LogService,) { }
