@@ -24,6 +24,7 @@ import { MissionAccomplishedComponent } from './mission-accomplished/mission-acc
 import { QuickStartComponent } from './quick-start/quick-start.component';
 import { LogComponent } from './log/log.component';
 import { QuickStart2Component } from './quick-start2/quick-start2.component';
+import { VideoCreatorsComponent } from './video-creators/video-creators.component';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { QuickStart2Component } from './quick-start2/quick-start2.component';
     QuickStartComponent,
     LogComponent,
     QuickStart2Component,
+    VideoCreatorsComponent,
   ],
   imports: [
     BrowserModule,
