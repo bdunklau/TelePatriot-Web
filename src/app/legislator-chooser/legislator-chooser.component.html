@@ -1,0 +1,25 @@
+<h3>Look Up Legislators</h3>
+<div class="container">
+
+<div class="row">
+<div class="col-xs-2 col-xs-offset-2 col-md-offset-2 col-lg-offset-2">
+  <app-state-chooser (state)="onStateChosen($event)"></app-state-chooser>
+</div>
+
+<div class="col-xs-1">
+  <app-chamber-chooser #chamberChooser (chamber)="onChamberChosen($event)"></app-chamber-chooser>
+</div>
+
+<div class="col-xs-4">
+  <app-district-chooser #districtChooser (district)="onDistrictChosen($event)"></app-district-chooser>
+</div>
+</div>
+
+<div class="row"><div class="col">&nbsp;</div></div>
+
+<div class="row" *ngFor="let legislator of legislators">
+  <div class="col">
+    <app-legislator [legislatorInput]="legislator"></app-legislator>
+  </div>
+</div>
+</div>
