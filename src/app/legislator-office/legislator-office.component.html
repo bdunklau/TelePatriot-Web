@@ -1,0 +1,4 @@
+<b>{{officeInput.name}}</b>
+<span *ngIf="!!officeInput.address"><br/>{{officeInput.address}}</span>
+<span *ngIf="!!officeInput.phone"><br/>{{officeInput.phone}}</span>
+<span *ngIf="!!officeInput.email"><br/><a href="mailto:{{officeInput.email}}" target="email">{{officeInput.email}}</a></span>
