@@ -13,11 +13,14 @@ import { QuickStart2Component } from './quick-start2/quick-start2.component';
 import { LogComponent } from './log/log.component';
 import { MissionAccomplishedGuard } from './mission-accomplished/mission-accomplished.guard';
 import { VideoCreatorsComponent } from './video-creators/video-creators.component';
+import { LegislatorsComponent } from './legislators/legislators.component';
+import { VideoInstructionsComponent } from './video-instructions/video-instructions.component';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'video/instructions', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
+  { path: 'legislators', component: LegislatorsComponent },
   { path: 'log', component: LogComponent },
   { path: 'mission-accomplished/:video_node_key/:sms_phone', component: MissionAccomplishedComponent,
         canActivate: [VideoNodeGuard],
@@ -31,6 +34,8 @@ const routes: Routes = [
         component: VideoInvitationComponent,
         canActivate: [VideoNodeGuard, VideoInvitationGuard, MissionAccomplishedGuard],
         resolve: {videoNode: VideoNodeResolver, videoInvitation: VideoInvitationResolver} },
+
+  { path: 'video/instructions', component: VideoInstructionsComponent },
 ];
 
 @NgModule({
