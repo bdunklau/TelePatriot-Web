@@ -240,6 +240,12 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
         }
     }
 
+
+    //  usage:     await this.delay(3000)
+    // delay(ms: number) {
+    //     return new Promise( resolve => setTimeout(resolve, ms) );
+    // }
+
     // join the room
     async doConnect(roomName: string, auth_token: string) {
         // let tracks = createLocalTracks({ audio: true, video: true });
