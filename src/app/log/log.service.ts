@@ -23,6 +23,7 @@ export class LogService {
         e['level'] = 'debug';
         // e['isError'] = msg.toLowerCase().indexOf('error') != -1;
 
+        // uncomment to log to db
         // this.db.list("video/log").push(e);
     }
 
