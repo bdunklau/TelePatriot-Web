@@ -26,6 +26,16 @@ import { LogComponent } from './log/log.component';
 import { QuickStart2Component } from './quick-start2/quick-start2.component';
 import { VideoCreatorsComponent } from './video-creators/video-creators.component';
 import { MenuComponent } from './menu/menu.component';
+import { LegislatorsComponent } from './legislators/legislators.component';
+import { VideoInstructionsComponent } from './video-instructions/video-instructions.component';
+import { LegislatorChooserComponent } from './legislator-chooser/legislator-chooser.component';
+import { StateChooserComponent } from './state-chooser/state-chooser.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChamberChooserComponent } from './chamber-chooser/chamber-chooser.component';
+import { DistrictChooserComponent } from './district-chooser/district-chooser.component';
+import { LegislatorComponent } from './legislator/legislator.component';
+import { LegislatorOfficeComponent } from './legislator-office/legislator-office.component';
+import { SocialMediaDisplayComponent } from './social-media-display/social-media-display.component'; // https://ng-bootstrap.github.io/#/getting-started
 
 
 @NgModule({
@@ -48,6 +58,15 @@ import { MenuComponent } from './menu/menu.component';
     QuickStart2Component,
     VideoCreatorsComponent,
     MenuComponent,
+    LegislatorsComponent,
+    VideoInstructionsComponent,
+    LegislatorChooserComponent,
+    StateChooserComponent,
+    ChamberChooserComponent,
+    DistrictChooserComponent,
+    LegislatorComponent,
+    LegislatorOfficeComponent,
+    SocialMediaDisplayComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,6 +75,7 @@ import { MenuComponent } from './menu/menu.component';
     FormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig, 'TelePatriot'), // Required for everything
     AngularFireDatabaseModule,
+    NgbModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]
