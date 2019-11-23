@@ -1,0 +1,9 @@
+
+    <div ngbDropdown class="d-inline-block" style="width:100%">
+      <button class="btn btn-outline-primary" id="districtDropdown" ngbDropdownToggle style="width:100%">{{districtValue}}</button>
+      <div ngbDropdownMenu aria-labelledby="districtDropdown">
+        <button *ngFor="let district of districts" id="{{district}}" ngbDropdownItem (click)="chooseDistrict(district)">{{district}}</button>
+        <!-- <button id="infoLevel" ngbDropdownItem (click)="chooseLevel('info')">info</button>
+        <button id="errorLevel" ngbDropdownItem (click)="chooseLevel('error')">error</button> -->
+      </div>
+    </div>

@@ -1,0 +1,15 @@
+<button (click)="deleteLogs()">Delete Logs</button>
+<br/>
+          <table class="table table-striped">
+            <tbody>
+            <tr *ngFor="let logentry of logs">
+              <td class="{{logentry.level}}">
+                <div class="row">
+                  <!-- <div class="col-md-4"><small>{{ logentry.date }}</small></div> -->
+                  <!-- <div class="col-md-2 text-left"><small><span class="log_element log_level">{{ logentry.level }}</span></small></div> -->
+                  <div class="col-md-12"><small>{{ logentry.event }}</small></div>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>

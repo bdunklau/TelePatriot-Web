@@ -45,6 +45,8 @@ export class VideoNodeGuard implements CanActivate {
       // using the spread operator to keep the previously resolved data
       next.data = {...next.data, /*guarded data*/videoNode: videoNode};
 
+      console.log('next.data.videoNode = ', next.data.videoNode);
+
       // now go look at video-node.resolver.ts
 
       return true;

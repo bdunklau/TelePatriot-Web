@@ -1,0 +1,9 @@
+
+    <div ngbDropdown class="d-inline-block" style="width:100%">
+      <button class="btn btn-outline-primary" id="chamberDropdown" ngbDropdownToggle style="width:100%">{{chamberValue}}</button>
+      <div ngbDropdownMenu aria-labelledby="chamberDropdown">
+        <button *ngFor="let chamber of chambers" id="{{chamber.long}}" ngbDropdownItem (click)="chooseChamber(chamber)">{{chamber.short}}</button>
+        <!-- <button id="infoLevel" ngbDropdownItem (click)="chooseLevel('info')">info</button>
+        <button id="errorLevel" ngbDropdownItem (click)="chooseLevel('error')">error</button> -->
+      </div>
+    </div>

@@ -1,0 +1,91 @@
+<!--
+display social media link
+or
+display a field to change the handle
+ -->
+
+<div class="row">
+   <div class="col-lg-12">
+<!--
+WE ARE EITHER ADDING A BRAND NEW HANDLE OR WE ARE VIEWING/EDITING AN EXISTING HANDLE
+
+ADDING BRAND NEW HANDLE IS THE TOP HALF OF THIS PAGE
+
+VIEWING/EDITING THE BOTTOM HALF -->
+
+
+
+        <!-- THIS THE ADDING BRAND NEW HANDLE SECTION -->
+        <span *ngIf="addingNew">
+            <div class="row">
+                <div class="col" style="white-space:nowrap">
+
+                    <div ngbDropdown class="d-inline-block" style="width:100px">
+                      <button class="btn btn-outline-primary" id="socialMediaTypeDropdown" ngbDropdownToggle style="width:100px">{{channelInput.type}}</button>
+                      <div ngbDropdownMenu aria-labelledby="socialMediaTypeDropdown">
+                          <button id="facebookChoice" ngbDropdownItem (click)="chooseType('facebook')">Facebook</button>
+                          <button id="twitterChoice" ngbDropdownItem (click)="chooseType('twitter')">Twitter</button>
+                          <button id="instagramChoice" ngbDropdownItem (click)="chooseType('instagram')">Instagram</button>
+                          <button id="youtubeChoice" ngbDropdownItem (click)="chooseType('youtube')">YouTube</button>
+                          <button id="linkedinChoice" ngbDropdownItem (click)="chooseType('linkedin')">LinkedIn</button>
+                      </div>
+                    </div>
+                <!-- </div>
+                <div class="col"> -->
+
+                    <div class="d-inline-block">
+                        <input type="text" class="form-control" name="id" size="10" value="{{channelInput.id}}" [(ngModel)]="channelInput.id"
+                                placeholder="handle">
+                    </div>
+
+                    <div class="d-inline-block">
+                        <a (click)="save()"><i class="fa fa-check" style="color:#008000"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </span>
+        <!-- THIS THE ADDING BRAND NEW HANDLE SECTION -->
+
+
+
+
+
+        <!-- THIS IS THE VIEWING EDITING SECTION  -->
+        <span *ngIf="!addingNew">
+
+              <div class="row">
+                  <div class="col">
+
+                        <span *ngIf="!editing" style="white-space: nowrap;">
+                            <a href="{{channelInput.url}}" target="socialmedia">{{channelInput.url}}</a>
+
+                            <span *ngIf="!deleting">
+                            &nbsp; <a (click)="editing = true"><i class="fa fa-edit"></i></a>
+                            &nbsp; <a (click)="deleteHandle()"><i class="fa fa-remove"></i></a>
+                            </span>
+
+                            <!-- confirm that we really want to delete the handle -->
+                            <span *ngIf="deleting">
+                                <br/><span style="color:#900000">Really?</span> &nbsp; &nbsp; <a (click)="cancelDelete()">No/Cancel</a>
+                                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                <span style="color:#900000"><a (click)="deleteHandle()">Yes/Delete</a></span>
+                            </span>
+                        </span>
+
+
+                        <span *ngIf="editing" style="white-space: nowrap;">
+                            <a href="{{channelInput.url}}" target="socialmedia">{{domain}}</a>
+                            <input type="text" name="id" size="10" value="{{channelInput.id}}" [(ngModel)]="channelInput.id"> &nbsp;&nbsp;
+                            <a (click)="save()"><i class="fa fa-check" style="color:#008000"></i></a>
+                        </span>
+
+                  </div>
+              </div>
+
+        </span>
+        <!-- THIS IS THE VIEWING EDITING SECTION  -->
+
+
+    </div>
+</div>

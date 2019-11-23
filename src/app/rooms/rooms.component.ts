@@ -21,33 +21,33 @@ export class RoomsComponent implements OnInit, OnDestroy {
         private readonly videoChatService: VideoChatService) { }
 
     async ngOnInit() {
-        await this.updateRooms();
-        this.subscription =
-            this.videoChatService
-                .$roomsUpdated
-                .pipe(tap(_ => this.updateRooms()))
-                .subscribe();
+        // await this.updateRooms();
+        // this.subscription =
+        //     this.videoChatService
+        //         .$roomsUpdated
+        //         .pipe(tap(_ => this.updateRooms()))
+        //         .subscribe();
     }
 
     ngOnDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
-        }
+        // if (this.subscription) {
+        //     this.subscription.unsubscribe();
+        // }
     }
 
     onTryAddRoom() {
-        if (this.roomName) {
-            this.onAddRoom(this.roomName);
-        }
+        // if (this.roomName) {
+        //     this.onAddRoom(this.roomName);
+        // }
     }
 
     onAddRoom(roomName: string) {
-        this.roomName = null;
-        this.roomChanged.emit(roomName);
+        // this.roomName = null;
+        // this.roomChanged.emit(roomName);
     }
 
     onJoinRoom(roomName: string) {
-        this.roomChanged.emit(roomName);
+        // this.roomChanged.emit(roomName);
     }
 
     async updateRooms() {

@@ -1,0 +1,46 @@
+
+tokenDate: {{tokenDate}}
+<br/>
+ref date: {{date_ms}}
+
+
+    <form (ngSubmit)="onSubmit()" #quickStartForm="ngForm">
+      <div class="form-group">
+        <input type="text" class="form-control" id="room_field" placeholder="Room"
+                [(ngModel)]="roomValue" name="room" #room="ngModel" required>
+        <div [hidden]="room.valid || room.pristine"
+             class="alert alert-danger">
+          Room is required
+        </div>
+
+        <input type="text" class="form-control" id="token_field" placeholder="Token"
+                [(ngModel)]="tokenValue" name="token" #token="ngModel" required>
+        <div [hidden]="token.valid || token.pristine"
+             class="alert alert-danger">
+          token is required
+        </div>
+      </div>
+
+      <button id="submit" type="submit" class="btn btn-success" [disabled]="!quickStartForm.form.valid">Join Room</button>
+      &nbsp;
+      <!-- <button id="cancel" type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button> -->
+      &nbsp;
+      <button id="leave" type="button" (click)="leaveRoom()" class="btn btn-secondary">Leave Room</button>
+
+    </form>
+
+<div class="row">
+    <div class="col">
+        "preview":
+        <br/>
+        <div id="preview" #preview style="width:30vw;">
+            <div *ngIf="isInitializing">Loading preview... Please wait.</div>
+        </div>
+
+        "remote":
+        <div #list></div>
+    </div>
+    <div class="col">
+        <app-log></app-log>
+    </div>
+</div>

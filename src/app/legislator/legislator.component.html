@@ -1,0 +1,29 @@
+
+<div style="border-top:1px solid #444444; margin-bottom:30px">
+<div class="row">
+  <div class="col-lg-4"><div style="padding-top:10px"><img [width]="150" [attr.src]="photo_url"/></div></div>
+  <div class="col-lg-5 col-ls-offset-2">
+      <span  style="white-space: nowrap;"><b>{{legislatorInput.first_name}} {{legislatorInput.last_name}} ({{legislatorInput.party_abbrev}})</b> (ID: {{legislatorInput.leg_id}})</span>
+      <br/>{{chamber}} {{legislatorInput.district}}
+      <span *ngFor="let email of legislatorInput.emails"><br/><a href="mailto:{{email}}" target="email">{{email}}</a></span>
+
+      <br/><b>Social Media</b> <a (click)="addChannel()"> &nbsp; <i class="fa fa-plus"></i></a>
+      <span *ngFor="let channel of legislatorInput.channels">
+          <!-- <div class="col-xs-12"> -->
+              <!-- <a href="{{channel.url}}" target="socialmedia">{{channel.url}}</a> -->
+              <app-social-media-display [legIdInput]="legislatorInput.leg_id"
+                                        [channelInput]="channel"
+                                        (deletedChannelOutput)="onChannelDeleted($event)">
+              </app-social-media-display>
+              <br/>
+          <!-- </div> -->
+      </span>
+
+
+      <span *ngFor="let office of legislatorInput.offices">
+          <br/><app-legislator-office [officeInput]="office"></app-legislator-office>
+      </span>
+
+  </div>
+</div>
+</div>

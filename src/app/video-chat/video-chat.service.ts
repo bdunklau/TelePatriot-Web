@@ -13,6 +13,7 @@ import { VideoEvent } from '../video-event/video-event.model';
 import { VideoInvitation } from '../video-invitation/video-invitation.model';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { LogService } from '../log/log.service';
 
 interface AuthToken {
     token: string;
@@ -31,13 +32,14 @@ export type Rooms = NamedRoom[];
     providedIn: 'root'
 })
 export class VideoChatService {
-    $roomsUpdated: Observable<boolean>;
+    // $roomsUpdated: Observable<boolean>;
 
-    private roomBroadcast = new ReplaySubject<boolean>();
+    // private roomBroadcast = new ReplaySubject<boolean>();
 
     constructor(private readonly http: HttpClient,
+                private log: LogService,
                 private db: AngularFireDatabase,) {  // AngularFireDatabase:  https://github.com/angular/angularfire2/blob/master/src/database/database.ts
-        this.$roomsUpdated = this.roomBroadcast.asObservable();
+        // this.$roomsUpdated = this.roomBroadcast.asObservable();
     }
 
     acceptInvitation(videoInvitation: VideoInvitation) {
@@ -104,30 +106,38 @@ export class VideoChatService {
 
     // called by   HomeComponent.onRoomChanged()
     async joinOrCreateRoom(name: string, tracks: LocalTrack[], auth_token: string) {
+        this.d('joinOrCreateRoom: tracks = '+ tracks);
         let room: Room = null;
         try {
             const token = auth_token; //await this.getAuthToken();
             room =
                 await connect(
                     token, {
+                        logLevel: 'debug',
                         name,
                         tracks,
-                        dominantSpeaker: true
+                        // dominantSpeaker: true,
+                        // automaticSubscription: true
                     } as ConnectOptions);
         } catch (error) {
-            console.error(`Unable to connect to Room: ${error.message}`);
+            this.d(`ERROR: Unable to connect to Room: ${error.message}`);
         } finally {
-            if (room) {
-                this.roomBroadcast.next(true);
-            }
+            // if (room) {
+            //     this.roomBroadcast.next(true);
+            // }
         }
-
+        this.d('returning room = '+room+' for name='+name);
         return room;
     }
 
 
 // not sure what this is for - but you can search for usages
     nudge() {
-        this.roomBroadcast.next(true);
+        // this.roomBroadcast.next(true);
+    }
+
+
+    d(msg:string) {
+        this.log.d('VideoChatService: '+msg);
     }
 }
