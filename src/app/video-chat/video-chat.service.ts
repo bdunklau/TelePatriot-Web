@@ -63,6 +63,23 @@ export class VideoChatService {
         this.db.object('/').update(nodes);
     }
 
+    // get rid of this
+    // canSeeRemoteParticipant(arg: {myUid: string, video_node_key: string, canSeeRemote: boolean}) {
+    //     var nodes = {}
+    //     var key = 'video/list/'+arg.video_node_key+'/video_participants/'+arg.myUid+'/i_can_see_you';
+    //     nodes[key] = arg.canSeeRemote;
+    //     console.log('nodes = ', nodes);
+    //     this.db.object('/').update(nodes);
+    // }
+
+    setPageLoaded(arg: {myUid: string, video_node_key: string, page_loaded: boolean}) {
+        var nodes = {}
+        var key = 'video/list/'+arg.video_node_key+'/video_participants/'+arg.myUid+'/page_loaded';
+        nodes[key] = arg.page_loaded;
+        console.log('nodes = ', nodes);
+        this.db.object('/').update(nodes);
+    }
+
     connectRequest(videoNode: VideoNode) {
         let ve: VideoEvent = new VideoEvent(videoNode, "connect request");
         // ve.save();
