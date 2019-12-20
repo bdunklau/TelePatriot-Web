@@ -20,8 +20,8 @@ export class VideoEvent {
     this.video_node_key = videoNode.val.video_node_key;
     this.room_id = videoNode.val.room_id;
     this.request_type = request_type;
-    this.RoomSid = videoNode.val.RoomSid
-    this.MediaUri = videoNode.val.MediaUri
+    this.RoomSid = videoNode.val.room_sid;
+    this.MediaUri = videoNode.val.MediaUri;
   }
 
   toObj(): any {

@@ -36,6 +36,8 @@ import { connect,
 export class VideoInvitationComponent implements OnInit, OnDestroy {
 
     name: string;
+    myUid: string;
+    video_node_key: string;
     // tokenDate: number;
     // vtSub: Subscription;
     date_ms: number;
@@ -71,6 +73,8 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
     async ngOnInit() {
 
         console.log('this.route.data has toPromise()??  ', this.route.data);
+        console.log('this.route.snapshot.params[video_node_key] = '+this.route.snapshot.params['video_node_key']);
+        this.video_node_key = this.route.snapshot.params['video_node_key']
         let obj = await this.route.data.pipe(take(1)).toPromise();
         const vi = obj.videoInvitation;
         const vn = obj.videoNode
@@ -80,12 +84,21 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
         if(vi) {
             this.videoChatService.acceptInvitation(vi); // TODO should be videoInvitationService
         }
-        this.videoChatService.connectRequest(vn);
+        // this.videoChatService.connectRequest(vn);
 
         this.figureOutConnectivity(vn, vi);
     }
 
-    @HostListener('window:beforeunload')
+    // @HostListener('window:beforeunload', ['$event'])
+    // async beforeUnload(event) {
+    //     this.videoChatService.setPageLoaded({myUid: this.myUid, video_node_key: this.video_node_key, page_loaded: false});
+    // }
+    //
+    // @HostListener('window:unload', ['$event'])
+    // async unload(event) {
+    //     this.videoChatService.setPageLoaded({myUid: this.myUid, video_node_key: this.video_node_key, page_loaded: false});
+    // }
+
     async ngOnDestroy() {
         this.doDisconnect();
         if(this.videoNodeSubscription) this.videoNodeSubscription.unsubscribe();
@@ -96,6 +109,7 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
         this.d('ngAfterViewInit(): this.previewElement && this.previewElement.nativeElement = '+(this.previewElement && this.previewElement.nativeElement));
         if (this.previewElement && this.previewElement.nativeElement) {
             await this.initializeDevice();
+            this.videoChatService.setPageLoaded({myUid: this.myUid, video_node_key: this.video_node_key, page_loaded: true})
         }
     }
 
@@ -112,6 +126,7 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
             const vnode = new VideoNode(res);
             console.log('vnode = ', vnode);
 
+            this.myUid = vi.val['guest_id'];
             console.log("vi[\'guest_id\'] = ", vi.val['guest_id']);
 
             var missionAccomplished = vnode.val['email_to_participant_send_date'] != null
@@ -353,13 +368,13 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
     private registerParticipantEvents(participant: RemoteParticipant) {
        this.d('registerParticipantEvents(): participant='+participant);
         if (participant) {
-            this.d('registerParticipantEvents(): participant.tracks='+participant.tracks); // GOOD - we see this
+            this.d('registerParticipantEvents(): participant.tracks='+participant.tracks);
             participant.tracks.forEach(publication => {
-                this.d('registerParticipantEvents(): participant='+participant+':  this.subscribe(publication)'); // GOOD - we see this
+                this.d('registerParticipantEvents(): participant='+participant+':  this.subscribe(publication)');
                 this.subscribe(publication);
             });
             participant.on('trackPublished', publication => {
-                this.d('trackPublished for RemoteParticipant.identity='+participant.identity); // BAD - we do not see this
+                this.d('trackPublished for RemoteParticipant.identity='+participant.identity);
                 this.subscribe(publication)
               }
             );
@@ -400,20 +415,30 @@ export class VideoInvitationComponent implements OnInit, OnDestroy {
             // the first time, element is an <audio> element, type unknown
             // the second time, element is a <video> element, type unknown
             const element = track.attach();
-            console.log('element is a -> ', element);
+            console.log('this.myUid -> ', this.myUid);
             this.renderer.data.id = track.sid;
             this.renderer.setStyle(element, 'width', '30vw');
             // this.renderer.setStyle(element, 'height', '28vh');
             this.renderer.setStyle(element, 'margin-left', '0%');
             this.renderer.appendChild(this.listRef.nativeElement, element);
-            // this.participantsChanged.emit(true); // TODO keep this or what?
+
+            // GET RID OF THIS
+            // i_can_see_you attribute helps us figure out if we have a problem on either end of
+            // the call.  If i_can_see_you=true but the other person is seeing remoteCameraVisible=false
+            // then we have a problem.  We can fix this problem by allowing the other person to issue
+            // a "reconnect remote request" from his connectionClicked() function.  But "reconnect remote request"
+            // will only be an option when i_can_see_you=true for this person and remoteCameraVisible=false
+            // for the other person.
+            // this.videoChatService.canSeeRemoteParticipant({myUid: this.myUid, video_node_key: this.video_node_key, canSeeRemote: true});
+
         }
     }
 
     private detachRemoteTrack(track: RemoteTrack) {
         if (this.isDetachable(track)) {
             track.detach().forEach(el => el.remove());
-            // this.participantsChanged.emit(true);  // TODO keep this or what?
+            // GET RID OF THIS
+            // this.videoChatService.canSeeRemoteParticipant({myUid: this.myUid, video_node_key: this.video_node_key, canSeeRemote: false});
         }
     }
 
