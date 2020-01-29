@@ -14,7 +14,9 @@ import { LogComponent } from './log/log.component';
 import { MissionAccomplishedGuard } from './mission-accomplished/mission-accomplished.guard';
 import { VideoCreatorsComponent } from './video-creators/video-creators.component';
 import { LegislatorsComponent } from './legislators/legislators.component';
+import { TempComponent } from './temp/temp.component';
 import { VideoInstructionsComponent } from './video-instructions/video-instructions.component';
+import { WatchComponent } from './watch/watch.component';
 
 
 const routes: Routes = [
@@ -30,12 +32,14 @@ const routes: Routes = [
   { path: 'quick-start/:name/:token', component: QuickStartComponent },
   { path: 'quick-start2/:name', component: QuickStart2Component },
   { path: 'video/creators', component: VideoCreatorsComponent },
+  { path: 'temp', component: TempComponent },
   { path: 'video/invitation/:video_node_key/:sms_phone',
         component: VideoInvitationComponent,
         canActivate: [VideoNodeGuard, VideoInvitationGuard, MissionAccomplishedGuard],
         resolve: {videoNode: VideoNodeResolver, videoInvitation: VideoInvitationResolver} },
 
   { path: 'video/instructions', component: VideoInstructionsComponent },
+  { path: 'watch/:CompositionSid', component: WatchComponent },
 ];
 
 @NgModule({

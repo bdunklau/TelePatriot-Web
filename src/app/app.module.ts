@@ -35,7 +35,9 @@ import { ChamberChooserComponent } from './chamber-chooser/chamber-chooser.compo
 import { DistrictChooserComponent } from './district-chooser/district-chooser.component';
 import { LegislatorComponent } from './legislator/legislator.component';
 import { LegislatorOfficeComponent } from './legislator-office/legislator-office.component';
-import { SocialMediaDisplayComponent } from './social-media-display/social-media-display.component'; // https://ng-bootstrap.github.io/#/getting-started
+import { SocialMediaDisplayComponent } from './social-media-display/social-media-display.component';
+import { TempComponent } from './temp/temp.component';
+import { WatchComponent } from './watch/watch.component'; // https://ng-bootstrap.github.io/#/getting-started
 
 
 @NgModule({
@@ -67,6 +69,8 @@ import { SocialMediaDisplayComponent } from './social-media-display/social-media
     LegislatorComponent,
     LegislatorOfficeComponent,
     SocialMediaDisplayComponent,
+    TempComponent,
+    WatchComponent,
   ],
   imports: [
     BrowserModule,
